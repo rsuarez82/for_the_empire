@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Participants;
 use Doctrine\ORM\EntityManagerInterface;
+use Random\Randomizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -22,63 +23,85 @@ class ParticipantsController extends AbstractController
     #[Route('/participants/{id}', name: 'participants_show')]
     public function show(EntityManagerInterface $entityManager, int $id): Response
     {
-        $course = $entityManager->getRepository(Participants::class)->find($id);
+        $participant = $entityManager->getRepository(Participants::class)->find($id);
 
-        if (!$course) {
+        if (!$participant) {
             throw $this->createNotFoundException(
-                'No course found for id '.$id
+                'No participant found for id ' . $id
             );
         }
 
-        return new Response('Check out this great course: '.$course->getName());
-
-        // or render a template
-        // in the template, print things with {{ product.name }}
-        // return $this->render('product/show.html.twig', ['product' => $product]);
+        return $this->render('participant/show.html.twig', ['participant' => $participant]);
     }
 
     #[Route('/participants/create', name: 'participants_create')]
-    public function createProduct(ValidatorInterface $validator): Response
+    public function create(EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
     {
-        $course = new Participants();
+        $participant = new Participants();
+        $participant = $this->createParticipantFromFormData($participant, $this->container->get('parameter_bag')->all());
 
-        // ... update the product data somehow (e.g. with a form) ...
-
-        $errors = $validator->validate($course);
+        $errors = $validator->validate($participant);
         if (count($errors) > 0) {
             return new Response((string) $errors, 400);
         }
+
+        $entityManager->persist($participant);
+        $entityManager->flush();
 
         return new Response('success', 200);
     }
 
     #[Route('/participants/edit/{id}', name: 'participants_edit')]
-    public function update(EntityManagerInterface $entityManager, int $id): Response
+    public function update(EntityManagerInterface $entityManager, ValidatorInterface $validator, int $id): Response
     {
-        $course = $entityManager->getRepository(Participants::class)->find($id);
+        $participant = $entityManager->getRepository(Participants::class)->find($id);
 
-        if (!$course) {
+        if (!$participant) {
             throw $this->createNotFoundException(
-                'No courses found for id '.$id
+                'No participants found for id ' . $id
             );
         }
 
-        $course->setName('New courses name!');
+        $participant = $this->createParticipantFromFormData($participant, $this->container->get('parameter_bag')->all());
+
+        $errors = $validator->validate($participant);
+        if (count($errors) > 0) {
+            return new Response((string) $errors, 400);
+        }
+
         $entityManager->flush();
 
         return $this->redirectToRoute('participants_show', [
-            'id' => $course->getId()
+            'id' => $participant->getId()
         ]);
     }
 
     #[Route('/participants/delete/{id}', name: 'participants_delete')]
     public function delete(EntityManagerInterface $entityManager, int $id): Response
     {
-        $course = $entityManager->getRepository(Participants::class)->find($id);
+        $participant = $entityManager->getRepository(Participants::class)->find($id);
 
-        $entityManager->remove($course);
+        $entityManager->remove($participant);
         $entityManager->flush();
 
         return $this->redirectToRoute('participants_index');
+    }
+
+    /**
+     * Attempts to fill a participant object with data from the parameter bag
+     *
+     * @param Participants $participant
+     * @param array $formData
+     * @return Participants
+     */
+    protected function createParticipantFromFormData(Participants $participant, array $formData): Participants
+    {
+        $participant->setFirstname($formData['title']);
+        $participant->setLastname($formData['courseDate']);
+        $participant->setEmail($formData['content']);
+        $participant->setUnit($formData['description']);
+        $participant->setPassword(crypt($formData['courseLeader'], (new Randomizer())->getBytes(64)));
+
+        return $participant;
     }
 }

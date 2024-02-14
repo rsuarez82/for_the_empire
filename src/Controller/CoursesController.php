@@ -32,30 +32,27 @@ class CoursesController extends AbstractController
             );
         }
 
-        return new Response('Check out this great course: '.$course->getName());
-
-        // or render a template
-        // in the template, print things with {{ product.name }}
-        // return $this->render('product/show.html.twig', ['product' => $product]);
+        return $this->render('courses/show.html.twig', ['course' => $course]);
     }
 
     #[Route('/courses/create', name: 'courses_create')]
-    public function createProduct(ValidatorInterface $validator): Response
+    public function create(ValidatorInterface $validator, EntityManagerInterface $entityManager): Response
     {
-        $course = new Courses();
-
-        // ... update the product data somehow (e.g. with a form) ...
+        $course = $this->createCourseFromFormData(new Courses(), $this->container->get('parameter_bag')->all());
 
         $errors = $validator->validate($course);
         if (count($errors) > 0) {
             return new Response((string) $errors, 400);
         }
 
+        $entityManager->persist($course);
+        $entityManager->flush();
+
         return new Response('success', 200);
     }
 
     #[Route('/courses/edit/{id}', name: 'courses_edit')]
-    public function update(EntityManagerInterface $entityManager, int $id): Response
+    public function update(ValidatorInterface $validator, EntityManagerInterface $entityManager, int $id): Response
     {
         $course = $entityManager->getRepository(Courses::class)->find($id);
 
@@ -65,7 +62,13 @@ class CoursesController extends AbstractController
             );
         }
 
-        $course->setName('New courses name!');
+        $course = $this->createCourseFromFormData($course, $this->container->get('parameter_bag')->all());
+
+        $errors = $validator->validate($course);
+        if (count($errors) > 0) {
+            return new Response((string) $errors, 400);
+        }
+
         $entityManager->flush();
 
         return $this->redirectToRoute('courses_show', [
@@ -82,5 +85,24 @@ class CoursesController extends AbstractController
         $entityManager->flush();
 
         return $this->redirectToRoute('courses_index');
+    }
+
+    /**
+     * Attempts to fill a course object with data from the parameter bag
+     *
+     * @param Courses $course
+     * @param array $formData
+     * @return Courses
+     */
+    protected function createCourseFromFormData(Courses $course, array $formData): Courses
+    {
+        $course->setTitle($formData['title']);
+        $course->setCourseDate($formData['courseDate']);
+        $course->setContent($formData['content']);
+        $course->setDescription($formData['description']);
+        $course->setCourseLeader($formData['courseLeader']);
+        $course->setFreeSlots($formData['freeSlots']);
+
+        return $course;
     }
 }
