@@ -1,0 +1,10 @@
+{% block courses_delete %}
+    <form action="{{ path('courses_delete', {'id': course.id}) }}">
+        <input type="hidden" name="id" value="{{ course.id }}"/>
+        <ul>
+            <li>Do you really want to delete this course?</li>
+            {% include 'courses/_courses_fields_readonly.html.twig' %}
+            <li><input type="submit" value="Delete"/>&nbsp;<button onclick="history.back()">Cancel</button></li>
+        </ul>
+    </form>
+{% endblock %}

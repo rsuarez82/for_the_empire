@@ -1,0 +1,8 @@
+{% block courses_fields_readonly %}
+    <li>Title:<input value="{{ course.title }}" readonly/></li>
+    <li>Date:<input value="{{ course.courseDate }}" readonly/></li>
+    <li>Content:<input value="{{ course.content }}" readonly/></li>
+    <li>Description:<input value="{{ course.description }}" readonly/></li>
+    <li>Course Leader:<input value="{{ course.courseLeader }}" readonly/></li>
+    <li>Free Slots:<input value="{{ course.freeSlots }}" readonly/></li>
+{% endblock %}

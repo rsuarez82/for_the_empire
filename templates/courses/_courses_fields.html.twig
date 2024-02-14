@@ -1,0 +1,8 @@
+{% block courses_fields %}
+    <li>Title:<input name="title" value="{{ course.title }}"/></li>
+    <li>Date:<input name="courseDate" value="{{ course.courseDate }}"/></li>
+    <li>Content:<input name="content" value="{{ course.content }}"/></li>
+    <li>Description:<input name="description" value="{{ course.description }}"/></li>
+    <li>Course Leader:<input name="courseLeader" value="{{ course.courseLeader }}"/></li>
+    <li>Free Slots:<input name="freeSlots" value="{{ course.freeSlots }}"/></li>
+{% endblock %}

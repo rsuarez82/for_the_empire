@@ -1,0 +1,9 @@
+{% block participants_edit %}
+    <form action="{{ path('participants_edit', {'id': participant.id}) }}">
+        <input type="hidden" name="id" value="{{ participant.id }}"/>
+        <ul>
+            {% include 'participants/_participants_fields.html.twig' %}
+            <li><input type="submit" value="Save"/>&nbsp;<button onclick="history.back()">Back</button></li>
+        </ul>
+    </form>
+{% endblock %}

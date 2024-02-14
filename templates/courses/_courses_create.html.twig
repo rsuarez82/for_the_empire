@@ -1,0 +1,13 @@
+{% block courses_create %}
+    <form action="{{ path('courses_create') }}">
+        <ul>
+            <li>Title:<input name="title"/></li>
+            <li>Date:<input name="courseDate"/></li>
+            <li>Content:<input name="content"/></li>
+            <li>Description:<input name="description"/></li>
+            <li>Course Leader:<input name="courseLeader"/></li>
+            <li>Free Slots:<input name="freeSlots"/></li>
+            <li><input type="submit" value="Save"/>&nbsp;<button onclick="history.back()">Back</button></li>
+        </ul>
+    </form>
+{% endblock %}

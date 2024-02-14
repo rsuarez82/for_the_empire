@@ -1,0 +1,8 @@
+{% block courses_listing %}
+{% for course in courses %}
+    <ul>
+        {% include 'courses/_courses_fields_readonly.html.twig' %}
+        <li><a href="{{ path('courses_edit', {'id': course.id}) }}">Edit Course</a>&nbsp;|&nbsp;<a href="{{ path('courses_delete', {'id': course.id}) }}">Delete Course</a></li>
+    </ul>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,12 @@
+{% block participants_create %}
+    <form action="{{ path('participants_create') }}">
+        <ul>
+            <li>First name:<input name="firstname"/></li>
+            <li>Last name:<input name="lastname"/></li>
+            <li>eMail:<input name="email"/></li>
+            <li>Unit:<input name="unit"/></li>
+            <li>Password:<input name="password" type="password"></li>
+            <li><input type="submit" value="Save"/>&nbsp;<button onclick="history.back()">Back</button></li>
+        </ul>
+    </form>
+{% endblock %}

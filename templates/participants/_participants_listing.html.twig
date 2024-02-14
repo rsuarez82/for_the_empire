@@ -1,0 +1,8 @@
+{% block participants_listing %}
+{% for participant in participants %}
+    <ul>
+        {% include 'participants/_participants_fields_readonly.html.twig' %}
+        <li><a href="{{ path('participants_edit', {'id': participant.id}) }}">Edit Participant</a>&nbsp;|&nbsp;<a href="{{ path('participants_delete', {'id': participant.id}) }}">Delete Participant</a></li>
+    </ul>
+{% endfor %}
+{% endblock %}
