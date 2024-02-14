@@ -13,10 +13,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class ParticipantsController extends AbstractController
 {
     #[Route('/participants', name: 'participants_index')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
+        $participants = $entityManager->getRepository(Participants::class)->findAll();
+
         return $this->render('participants/index.html.twig', [
-            'controller_name' => 'ParticipantsController',
+            'participants' => $participants,
         ]);
     }
 
