@@ -28,9 +28,7 @@ class ParticipantsController extends AbstractController
         $participant = $entityManager->getRepository(Participants::class)->find($id);
 
         if (!$participant) {
-            throw $this->createNotFoundException(
-                'No participant found for id ' . $id
-            );
+            throw $this->createNotFoundException('No participant found for id ' . $id);
         }
 
         return $this->render('participant/show.html.twig', ['participant' => $participant]);
@@ -40,53 +38,18 @@ class ParticipantsController extends AbstractController
     public function create(EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
     {
         $participant = new Participants();
-        $participant = $this->createParticipantFromFormData($participant, $this->container->get('parameter_bag')->all());
+        $participant = $this->createParticipantFromFormData($participant,
+            $this->container->get('parameter_bag')->all());
 
         $errors = $validator->validate($participant);
         if (count($errors) > 0) {
-            return new Response((string) $errors, 400);
+            return new Response((string)$errors, 400);
         }
 
         $entityManager->persist($participant);
         $entityManager->flush();
 
         return new Response('success', 200);
-    }
-
-    #[Route('/participants/edit/{id}', name: 'participants_edit')]
-    public function update(EntityManagerInterface $entityManager, ValidatorInterface $validator, int $id): Response
-    {
-        $participant = $entityManager->getRepository(Participants::class)->find($id);
-
-        if (!$participant) {
-            throw $this->createNotFoundException(
-                'No participants found for id ' . $id
-            );
-        }
-
-        $participant = $this->createParticipantFromFormData($participant, $this->container->get('parameter_bag')->all());
-
-        $errors = $validator->validate($participant);
-        if (count($errors) > 0) {
-            return new Response((string) $errors, 400);
-        }
-
-        $entityManager->flush();
-
-        return $this->redirectToRoute('participants_show', [
-            'id' => $participant->getId()
-        ]);
-    }
-
-    #[Route('/participants/delete/{id}', name: 'participants_delete')]
-    public function delete(EntityManagerInterface $entityManager, int $id): Response
-    {
-        $participant = $entityManager->getRepository(Participants::class)->find($id);
-
-        $entityManager->remove($participant);
-        $entityManager->flush();
-
-        return $this->redirectToRoute('participants_index');
     }
 
     /**
@@ -105,5 +68,40 @@ class ParticipantsController extends AbstractController
         $participant->setPassword(crypt($formData['courseLeader'], (new Randomizer())->getBytes(64)));
 
         return $participant;
+    }
+
+    #[Route('/participants/edit/{id}', name: 'participants_edit')]
+    public function update(EntityManagerInterface $entityManager, ValidatorInterface $validator, int $id): Response
+    {
+        $participant = $entityManager->getRepository(Participants::class)->find($id);
+
+        if (!$participant) {
+            throw $this->createNotFoundException('No participants found for id ' . $id);
+        }
+
+        $participant = $this->createParticipantFromFormData($participant,
+            $this->container->get('parameter_bag')->all());
+
+        $errors = $validator->validate($participant);
+        if (count($errors) > 0) {
+            return new Response((string)$errors, 400);
+        }
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('participants_show', [
+            'id' => $participant->getId()
+        ]);
+    }
+
+    #[Route('/participants/delete/{id}', name: 'participants_delete')]
+    public function delete(EntityManagerInterface $entityManager, int $id): Response
+    {
+        $participant = $entityManager->getRepository(Participants::class)->find($id);
+
+        $entityManager->remove($participant);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('participants_index');
     }
 }

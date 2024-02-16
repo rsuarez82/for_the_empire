@@ -27,9 +27,7 @@ class CoursesController extends AbstractController
         $course = $entityManager->getRepository(Courses::class)->find($id);
 
         if (!$course) {
-            throw $this->createNotFoundException(
-                'No course found for id '.$id
-            );
+            throw $this->createNotFoundException('No course found for id ' . $id);
         }
 
         return $this->render('courses/show.html.twig', ['course' => $course]);
@@ -42,49 +40,13 @@ class CoursesController extends AbstractController
 
         $errors = $validator->validate($course);
         if (count($errors) > 0) {
-            return new Response((string) $errors, 400);
+            return new Response((string)$errors, 400);
         }
 
         $entityManager->persist($course);
         $entityManager->flush();
 
         return new Response('success', 200);
-    }
-
-    #[Route('/courses/edit/{id}', name: 'courses_edit')]
-    public function update(ValidatorInterface $validator, EntityManagerInterface $entityManager, int $id): Response
-    {
-        $course = $entityManager->getRepository(Courses::class)->find($id);
-
-        if (!$course) {
-            throw $this->createNotFoundException(
-                'No courses found for id '.$id
-            );
-        }
-
-        $course = $this->createCourseFromFormData($course, $this->container->get('parameter_bag')->all());
-
-        $errors = $validator->validate($course);
-        if (count($errors) > 0) {
-            return new Response((string) $errors, 400);
-        }
-
-        $entityManager->flush();
-
-        return $this->redirectToRoute('courses_show', [
-            'id' => $course->getId()
-        ]);
-    }
-
-    #[Route('/courses/delete/{id}', name: 'courses_delete')]
-    public function delete(EntityManagerInterface $entityManager, int $id): Response
-    {
-        $course = $entityManager->getRepository(Courses::class)->find($id);
-
-        $entityManager->remove($course);
-        $entityManager->flush();
-
-        return $this->redirectToRoute('courses_index');
     }
 
     /**
@@ -104,5 +66,39 @@ class CoursesController extends AbstractController
         $course->setFreeSlots($formData['freeSlots']);
 
         return $course;
+    }
+
+    #[Route('/courses/edit/{id}', name: 'courses_edit')]
+    public function update(ValidatorInterface $validator, EntityManagerInterface $entityManager, int $id): Response
+    {
+        $course = $entityManager->getRepository(Courses::class)->find($id);
+
+        if (!$course) {
+            throw $this->createNotFoundException('No courses found for id ' . $id);
+        }
+
+        $course = $this->createCourseFromFormData($course, $this->container->get('parameter_bag')->all());
+
+        $errors = $validator->validate($course);
+        if (count($errors) > 0) {
+            return new Response((string)$errors, 400);
+        }
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('courses_show', [
+            'id' => $course->getId()
+        ]);
+    }
+
+    #[Route('/courses/delete/{id}', name: 'courses_delete')]
+    public function delete(EntityManagerInterface $entityManager, int $id): Response
+    {
+        $course = $entityManager->getRepository(Courses::class)->find($id);
+
+        $entityManager->remove($course);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('courses_index');
     }
 }
