@@ -37,9 +37,10 @@ class ParticipantsController extends AbstractController
     #[Route('/participants/create', name: 'participants_create')]
     public function create(EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
     {
-        $participant = new Participants();
-        $participant = $this->createParticipantFromFormData($participant,
-            $this->container->get('parameter_bag')->all());
+        $participant = $this->createParticipantFromFormData(
+            new Participants(),
+            $this->container->get('parameter_bag')->all()
+        );
 
         $errors = $validator->validate($participant);
         if (count($errors) > 0) {

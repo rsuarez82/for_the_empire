@@ -36,7 +36,10 @@ class CoursesController extends AbstractController
     #[Route('/courses/create', name: 'courses_create')]
     public function create(ValidatorInterface $validator, EntityManagerInterface $entityManager): Response
     {
-        $course = $this->createCourseFromFormData(new Courses(), $this->container->get('parameter_bag')->all());
+        $course = $this->createCourseFromFormData(
+            new Courses(),
+            $this->container->get('parameter_bag')->all()
+        );
 
         $errors = $validator->validate($course);
         if (count($errors) > 0) {
