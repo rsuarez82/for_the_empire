@@ -8,11 +8,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class OverviewController extends AbstractController
 {
-    #[Route('/overview', name: 'overview')]
+    #[Route('/', name: 'overview')]
     public function index(): Response
     {
-        return $this->render('overview/index.html.twig', [
-            'controller_name' => 'OverviewController',
-        ]);
+        return $this->render('overview/index.html.twig');
     }
 }

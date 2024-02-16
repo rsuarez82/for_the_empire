@@ -25,8 +25,8 @@ class BookingController extends AbstractController
         ]);
     }
 
-    #[Route('/booking/create/{courseId}/{participantId}', name: 'booking_create')]
-    public function create(EntityManagerInterface $entityManager, ValidatorInterface $validator, $courseId, $participantId): Response
+    #[Route('/booking/create', name: 'booking_create')]
+    public function create(EntityManagerInterface $entityManager, ValidatorInterface $validator, int $courseId, int $participantId): Response
     {
         $courseHistory = new CoursesHistory();
         $courseHistory->setCourseId($courseId);

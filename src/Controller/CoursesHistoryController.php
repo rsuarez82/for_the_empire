@@ -24,27 +24,27 @@ class CoursesHistoryController extends AbstractController
         ]);
     }
 
-    #[Route('/courses_history/list_by_participant/{id}', name: 'courses_history_by_participant')]
-    public function listByParticipant(EntityManagerInterface $entityManager, int $id): Response
+    #[Route('/courses_history/list_by_participant', name: 'courses_history_by_participant')]
+    public function listByParticipant(EntityManagerInterface $entityManager, int $participantId): Response
     {
         $courses = $entityManager->getRepository(CoursesHistory::class)
-            ->findCoursesHistoryByParticipantId($id);
+            ->findCoursesHistoryByParticipantId($participantId);
 
         if (empty($courses)) {
-            throw $this->createNotFoundException('No history entries found for participant ' . $id);
+            throw $this->createNotFoundException('No history entries found for participant ' . $participantId);
         }
 
         return $this->render('courses_history/by_participant.html.twig', ['courses' => $courses]);
     }
 
-    #[Route('/courses_history/list_by_course/{id}', name: 'courses_history_by_course')]
-    public function listByCourse(EntityManagerInterface $entityManager, int $id): Response
+    #[Route('/courses_history/list_by_course', name: 'courses_history_by_course')]
+    public function listByCourse(EntityManagerInterface $entityManager, int $courseId): Response
     {
         $participants = $entityManager->getRepository(CoursesHistory::class)
-            ->findCoursesHistoryByCourseId($id);
+            ->findCoursesHistoryByCourseId($courseId);
 
         if (empty($participants)) {
-            throw $this->createNotFoundException('No history entries found for course ' . $id);
+            throw $this->createNotFoundException('No history entries found for course ' . $courseId);
         }
 
         return $this->render('courses_history/by_course.html.twig', ['participants' => $participants]);
