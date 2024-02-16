@@ -50,7 +50,9 @@ class ParticipantsController extends AbstractController
         $entityManager->persist($participant);
         $entityManager->flush();
 
-        return new Response('success', 200);
+        return $this->redirectToRoute('participants_show', [
+            'id' => $participant->getId()
+        ]);
     }
 
     /**

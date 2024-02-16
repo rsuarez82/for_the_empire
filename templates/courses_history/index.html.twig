@@ -25,7 +25,7 @@
         </li>
         <li><label>Show History by Participant</label>
             <form action="{{ path('courses_history_by_participant') }}">
-                <select>
+                <select name="id">
                     {% for participant in participants %}
                         <option value="{{ participant.id }}">
                             {{ participant.lastname }},&nbsp;{{ participant.firstname }}&nbsp;({{ participant.email }})&nbsp;-&nbsp;#{{ participant.id }}

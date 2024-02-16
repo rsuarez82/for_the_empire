@@ -49,7 +49,9 @@ class CoursesController extends AbstractController
         $entityManager->persist($course);
         $entityManager->flush();
 
-        return new Response('success', 200);
+        return $this->redirectToRoute('courses_show', [
+            'id' => $course->getId()
+        ]);
     }
 
     /**
