@@ -6,6 +6,7 @@ use App\Entity\Participants;
 use Doctrine\ORM\EntityManagerInterface;
 use Random\Randomizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -22,7 +23,7 @@ class ParticipantsController extends AbstractController
         ]);
     }
 
-    #[Route('/participants/{id}', name: 'participants_show')]
+    #[Route('/participants/show/{id}', name: 'participants_show')]
     public function show(EntityManagerInterface $entityManager, int $id): Response
     {
         $participant = $entityManager->getRepository(Participants::class)->find($id);
@@ -31,16 +32,13 @@ class ParticipantsController extends AbstractController
             throw $this->createNotFoundException('No participant found for id ' . $id);
         }
 
-        return $this->render('participant/show.html.twig', ['participant' => $participant]);
+        return $this->render('participants/show.html.twig', ['participant' => $participant]);
     }
 
     #[Route('/participants/create', name: 'participants_create')]
-    public function create(EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
+    public function create(EntityManagerInterface $entityManager, ValidatorInterface $validator, Request $request): Response
     {
-        $participant = $this->createParticipantFromFormData(
-            new Participants(),
-            $this->container->get('parameter_bag')->all()
-        );
+        $participant = $this->createParticipantFromFormData(new Participants(), $request);
 
         $errors = $validator->validate($participant);
         if (count($errors) > 0) {
@@ -56,25 +54,33 @@ class ParticipantsController extends AbstractController
     }
 
     /**
-     * Attempts to fill a participant object with data from the parameter bag
+     * Attempts to fill a participant object with data from create/edit forms
      *
      * @param Participants $participant
-     * @param array $formData
-     * @return Participants
+     * @param Request $request
+     * @return Participants|Response
      */
-    protected function createParticipantFromFormData(Participants $participant, array $formData): Participants
+    protected function createParticipantFromFormData(Participants $participant, Request $request): Participants|Response
     {
-        $participant->setFirstname($formData['title']);
-        $participant->setLastname($formData['courseDate']);
-        $participant->setEmail($formData['content']);
-        $participant->setUnit($formData['description']);
-        $participant->setPassword(crypt($formData['courseLeader'], (new Randomizer())->getBytes(64)));
+        $formData = $request->getPayload()->all();
+
+        try {
+            $participant->setFirstname($formData['firstname']);
+            $participant->setLastname($formData['lastname']);
+            $participant->setEmail($formData['email']);
+            $participant->setUnit($formData['unit']);
+            if (!empty($formData['password'])) {
+                $participant->setPassword(crypt($formData['password'], (new Randomizer())->getBytes(64)));
+            }
+        } catch (\Exception $e) {
+            return new Response($e->getMessage(), 400);
+        }
 
         return $participant;
     }
 
     #[Route('/participants/edit/{id}', name: 'participants_edit')]
-    public function update(EntityManagerInterface $entityManager, ValidatorInterface $validator, int $id): Response
+    public function editParticipant(EntityManagerInterface $entityManager, int $id): Response
     {
         $participant = $entityManager->getRepository(Participants::class)->find($id);
 
@@ -82,8 +88,19 @@ class ParticipantsController extends AbstractController
             throw $this->createNotFoundException('No participants found for id ' . $id);
         }
 
-        $participant = $this->createParticipantFromFormData($participant,
-            $this->container->get('parameter_bag')->all());
+        return $this->render('participants/edit.html.twig', ['participant' => $participant]);
+    }
+
+    #[Route('/participants/update', name: 'participants_update', methods: 'POST')]
+    public function update(EntityManagerInterface $entityManager, ValidatorInterface $validator, Request $request): Response
+    {
+        $participant = $entityManager->getRepository(Participants::class)->find($request->getPayload()->get('id'));
+
+        if (!$participant) {
+            throw $this->createNotFoundException('No participants found for id ' . $request->getPayload()->get('id'));
+        }
+
+        $participant = $this->createParticipantFromFormData($participant, $request);
 
         $errors = $validator->validate($participant);
         if (count($errors) > 0) {
@@ -96,11 +113,26 @@ class ParticipantsController extends AbstractController
             'id' => $participant->getId()
         ]);
     }
-
-    #[Route('/participants/delete/{id}', name: 'participants_delete')]
-    public function delete(EntityManagerInterface $entityManager, int $id): Response
+    #[Route('/participants/remove/{id}', name: 'participants_remove')]
+    public function deleteParticipant(EntityManagerInterface $entityManager, int $id): Response
     {
         $participant = $entityManager->getRepository(Participants::class)->find($id);
+
+        if (!$participant) {
+            throw $this->createNotFoundException('No participant found for id ' . $id);
+        }
+
+        return $this->render('participants/delete.html.twig', ['participant' => $participant]);
+    }
+
+    #[Route('/participants/delete', name: 'participants_delete', methods: 'POST')]
+    public function delete(EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $participant = $entityManager->getRepository(Participants::class)->find($request->getPayload()->get('id'));
+
+        if (!$participant) {
+            throw $this->createNotFoundException('No participant found for id ' . $request->getPayload()->get('id'));
+        }
 
         $entityManager->remove($participant);
         $entityManager->flush();

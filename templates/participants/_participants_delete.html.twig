@@ -1,9 +1,9 @@
 {% block participants_delete %}
-    <form action="{{ path('participants_delete', {'id': participant.id}) }}">
+    <form action="{{ path('participants_delete') }}" method="post">
         <input type="hidden" name="id" value="{{ participant.id }}"/>
         <ul>
             <li>Do you really want to delete this participant?</li>
-            {% include 'participants/fields_readonly.html.twig' %}
+            {% include 'participants/_participants_fields_readonly.html.twig' %}
             <li><input type="submit" value="Delete"/>&nbsp;<button onclick="history.back()">Cancel</button></li>
         </ul>
     </form>

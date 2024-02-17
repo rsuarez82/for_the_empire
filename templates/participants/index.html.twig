@@ -9,7 +9,8 @@
     </style>
 
     <div class="example-wrapper">
-        <h1>Manage Participants ✅</h1>
+        <h1>Manage Participants</h1>
         {{ include('participants/_participants_listing.html.twig') }}
+        <li><a href="{{ path('overview') }}">Back to Overview</a></li>
     </div>
 {% endblock %}

@@ -1,5 +1,5 @@
 {% block participants_edit %}
-    <form action="{{ path('participants_edit', {'id': participant.id}) }}">
+    <form action="{{ path('participants_update') }}" method="post">
         <input type="hidden" name="id" value="{{ participant.id }}"/>
         <ul>
             {% include 'participants/_participants_fields.html.twig' %}

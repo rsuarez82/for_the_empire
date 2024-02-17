@@ -1,7 +1,7 @@
 {% block participants_fields %}
-    <li>First name:<input name="firstname" value="{{ participant.fistname }}"/></li>
+    <li>First name:<input name="firstname" value="{{ participant.firstname }}"/></li>
     <li>Last name:<input name="lastname" value="{{ participant.lastname }}"/></li>
     <li>eMail:<input name="email" value="{{ participant.email }}"/></li>
     <li>Unit:<input name="unit" value="{{ participant.unit }}"/></li>
-    <li>Password:<input name="password" value="{{ participant.password }}" type="password"></li>
+    <li>Password:<input name="password" value=""><small class="text-info-emphasis">&nbsp;<small>&nbsp;&ast;Entering anything will set the password to this value.</small></li>
 {% endblock %}
