@@ -16,7 +16,7 @@
                 <select name="id">
                 {% for course in courses %}
                     <option value="{{ course.id }}">
-                        {{ course.title }}&nbsp;({{ course.date }})&nbsp;-&nbsp;#{{ course.id }}
+                        {{ course.title }}&nbsp;({{ course.courseDate|date('Y-m-d H:i:s') }})&nbsp;-&nbsp;#{{ course.id }}
                     </option>
                 {% endfor %}
                 </select>
@@ -28,7 +28,7 @@
                 <select name="id">
                     {% for participant in participants %}
                         <option value="{{ participant.id }}">
-                            {{ participant.lastname }},&nbsp;{{ participant.firstname }}&nbsp;({{ participant.email }})&nbsp;-&nbsp;#{{ participant.id }}
+                            {{ participant.lastname }},&nbsp;{{ participant.firstname }}&nbsp;({{ participant.email }})&nbsp;#{{ participant.id }}
                         </option>
                     {% endfor %}
                 </select>
