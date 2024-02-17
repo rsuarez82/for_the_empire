@@ -1,5 +1,5 @@
 {% block courses_edit %}
-    <form action="{{ path('courses_update', {'id': course.id}) }}" method="post">
+    <form action="{{ path('courses_update') }}" method="post">
         <input type="hidden" name="id" value="{{ course.id }}"/>
         <ul>
             {% include 'courses/_courses_fields.html.twig' %}
