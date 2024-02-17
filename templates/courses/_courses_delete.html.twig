@@ -1,5 +1,5 @@
 {% block courses_delete %}
-    <form action="{{ path('courses_delete' }}" method="post">
+     <form action="{{ path('courses_delete') }}" method="post">
         <input type="hidden" name="id" value="{{ course.id }}"/>
         <ul>
             <li>Do you really want to delete this course?</li>
