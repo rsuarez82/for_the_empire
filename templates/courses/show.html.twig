@@ -9,7 +9,8 @@
     </style>
 
     <div class="example-wrapper">
-        <h1>View Course ✅</h1>
+        <h1>View Course</h1>
         {{ include('courses/_courses_fields_readonly.html.twig') }}
+        <li><button onclick="history.back()">Back</button></li>
     </div>
 {% endblock %}
