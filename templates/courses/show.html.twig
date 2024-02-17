@@ -11,6 +11,6 @@
     <div class="example-wrapper">
         <h1>View Course</h1>
         {{ include('courses/_courses_fields_readonly.html.twig') }}
-        <li><button onclick="history.back()">Back</button></li>
+        <li><a href="{{ path('courses_index') }}">Back to Courses</li>
     </div>
 {% endblock %}
