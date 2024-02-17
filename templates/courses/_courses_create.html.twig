@@ -1,5 +1,5 @@
 {% block courses_create %}
-    <form action="{{ path('courses_create') }}">
+    <form action="{{ path('courses_create') }}" method="post">
         <ul>
             <li>Title:<input name="title"/></li>
             <li>Date:<input name="courseDate"/></li>
