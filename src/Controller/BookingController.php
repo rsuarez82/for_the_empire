@@ -7,6 +7,7 @@ use App\Entity\CoursesHistory;
 use App\Entity\Participants;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -25,12 +26,16 @@ class BookingController extends AbstractController
         ]);
     }
 
-    #[Route('/booking/create', name: 'booking_create')]
-    public function create(EntityManagerInterface $entityManager, ValidatorInterface $validator, int $courseId, int $participantId): Response
+    #[Route('/booking/create', name: 'booking_create', methods: 'POST')]
+    public function create(EntityManagerInterface $entityManager, ValidatorInterface $validator, Request $request): Response
     {
         $courseHistory = new CoursesHistory();
-        $courseHistory->setCourseId($courseId);
-        $courseHistory->setParticipantId($participantId);
+
+        $course = $entityManager->getRepository(Courses::class)->find($request->getPayload()->get('courseId'));
+        $participant = $entityManager->getRepository(Participants::class)->find($request->getPayload()->get('participantId'));
+
+        $courseHistory->setCourse($course);
+        $courseHistory->setParticipant($participant);
 
         $errors = $validator->validate($courseHistory);
         if (count($errors) > 0) {

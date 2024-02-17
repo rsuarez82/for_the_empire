@@ -11,27 +11,30 @@
 <div class="example-wrapper">
     <h1>Booking</h1>
     <ul>
+        <form action="{{ path('booking_create') }}" method="post">
         <li>
-            <form action="{{ path('booking_create') }}">
-                <label>Participant:</label>
-                <select name="participantId">
-                    {% for participant in participants %}
-                        <option value="{{ participant.id }}">
-                            {{ participant.lastname }},&nbsp;{{ participant.firstname }}&nbsp;({{ participant.email }})&nbsp;-&nbsp;#{{ participant.id }}
-                        </option>
-                    {% endfor %}
-                </select>
-                <label>Course:</label>
-                <select name="courseId">
-                    {% for course in courses %}
-                        <option value="{{ course.id }}">
-                            {{ course.title }}&nbsp;({{ course.date }})&nbsp;-&nbsp;#{{ course.id }}
-                        </option>
-                    {% endfor %}
-                </select>
-                <input type="submit" value="Book"/>
-            </form>
+            <label>Participant:</label>
+            <select name="participantId">
+                {% for participant in participants %}
+                    <option value="{{ participant.id }}">
+                        {{ participant.lastname }},&nbsp;{{ participant.firstname }}&nbsp;({{ participant.email }})&nbsp;#{{ participant.id }}
+                    </option>
+                {% endfor %}
+            </select>
         </li>
+        <li>
+            <label>Course:</label>
+            <select name="courseId">
+                {% for course in courses %}
+                    <option value="{{ course.id }}">
+                        {{ course.title }}&nbsp;({{ course.courseDate|date('Y-m-d H:i:s') }})&nbsp;-&nbsp;#{{ course.id }}
+                    </option>
+                {% endfor %}
+            </select>
+        </li>
+        <input type="submit" value="Book"/>
+        </form>
     </ul>
+    <li><a href="{{ path('overview') }}">Back to Overview</a></li>
 </div>
 {% endblock %}
