@@ -6,6 +6,7 @@ use App\Entity\Courses;
 use App\Entity\CoursesHistory;
 use App\Entity\Participants;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -23,30 +24,43 @@ class CoursesHistoryRepository extends ServiceEntityRepository
         parent::__construct($registry, CoursesHistory::class);
     }
 
-    public function findCoursesHistoryByCourseId(int $courseId): ?Courses
+    public function findCoursesHistoryByCourseId(int $courseId): ?array
     {
         $entityManager = $this->getEntityManager();
+        $resultSetMapping = new ResultSetMapping();
 
-        $query = $entityManager->createQuery(
-            'SELECT ch, c
-            FROM App\Entity\CoursesHistory ch
-            INNER JOIN ch.courseId c
-            WHERE c.id = :id'
-        )->setParameter('id', $courseId);
+        $query = $entityManager->createNativeQuery(
+            'SELECT p.id, p.firstname, p.lastname, p.email, p.unit '
+            . 'FROM participants AS p '
+            . 'JOIN courses_history AS ch ON p.id = ch.participant_id '
+            . 'JOIN courses AS c ON c.id = ch.course_id '
+            . 'WHERE ch.course_id = :courseId',
+            $resultSetMapping
+        );
+        $query->setParameter('courseId', $courseId);
 
-        return $query->getOneOrNullResult();
+        return $query->getResult();
     }
-    public function findCoursesHistoryByParticipantId(int $participantId): ?Participants
+
+    /**
+     * @param int $participantId
+     * @return array|null
+     */
+    public function findCoursesHistoryByParticipantId(int $participantId): ?array
     {
         $entityManager = $this->getEntityManager();
+        $resultSetMapping = new ResultSetMapping();
 
-        $query = $entityManager->createQuery(
-            'SELECT ch, p
-            FROM App\Entity\CoursesHistory ch
-            INNER JOIN ch.participant p
-            WHERE p.id = :id'
-        )->setParameter('id', $participantId);
+        $query = $entityManager->createNativeQuery(
+                'SELECT c.id, c.title, c.course_date, c.content, c.description, c.course_leader, c.free_slots '
+                . 'FROM courses AS c '
+                . 'JOIN courses_history AS ch ON c.id = ch.course_id '
+                . 'JOIN participants AS p ON p.id = ch.participant_id '
+                . 'WHERE ch.participant_id = :participantId',
+            $resultSetMapping
+        );
+        $query->setParameter('participantId', $participantId);
 
-        return $query->getOneOrNullResult();
+        return $query->getResult();
     }
 }

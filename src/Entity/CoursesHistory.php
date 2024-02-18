@@ -13,39 +13,39 @@ class CoursesHistory
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'id')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Courses $courseId = null;
+    #[ORM\ManyToOne(targetEntity: Courses::class, inversedBy: 'id')]
+    #[ORM\JoinColumn(name: 'course_id', referencedColumnName: 'id' ,nullable: false)]
+    private ?Courses $course = null;
 
-    #[ORM\ManyToOne(inversedBy: 'id')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Participants $participantId = null;
+    #[ORM\ManyToOne(targetEntity: Participants::class, inversedBy: 'id')]
+    #[ORM\JoinColumn(name: 'participant_id', referencedColumnName: 'id' ,nullable: false)]
+    private ?Participants $participant = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCourseId(): ?Courses
+    public function getCourse(): ?Courses
     {
-        return $this->courseId;
+        return $this->course;
     }
 
-    public function setCourseId(?Courses $courseId): static
+    public function setCourse(?Courses $course): static
     {
-        $this->courseId = $courseId;
+        $this->course = $course;
 
         return $this;
     }
 
-    public function getParticipantId(): ?Participants
+    public function getParticipant(): ?Participants
     {
-        return $this->participantId;
+        return $this->participant;
     }
 
-    public function setParticipantId(?Participants $participantId): static
+    public function setParticipant(?Participants $participant): static
     {
-        $this->participantId = $participantId;
+        $this->participant = $participant;
 
         return $this;
     }
